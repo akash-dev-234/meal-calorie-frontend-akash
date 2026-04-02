@@ -6,23 +6,14 @@ import type { RegisterInput, LoginInput } from "@/lib/validations"
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface JwtPayload {
+  userId?: number
   sub?: string | number
-  user_id?: number
-  id?: number
-  first_name?: string
-  last_name?: string
-  email?: string
 }
 
 export function decodeToken(token: string): Partial<User> {
   try {
-    const payload = jwtDecode<JwtPayload>(token)
-    return {
-      id: Number(payload.user_id ?? payload.id ?? payload.sub ?? 0),
-      first_name: payload.first_name ?? "",
-      last_name: payload.last_name ?? "",
-      email: payload.email ?? "",
-    }
+    const { userId, sub } = jwtDecode<JwtPayload>(token)
+    return { id: Number(userId ?? sub ?? 0) }
   } catch {
     return {}
   }
@@ -58,7 +49,7 @@ async function request<T>(
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
 
   if (!res.ok) {
-    if (res.status === 403) {
+    if (res.status === 401 || res.status === 403) {
       const { useAuthStore } = await import("@/stores/authStore")
       useAuthStore.getState().clearAuth()
     }
