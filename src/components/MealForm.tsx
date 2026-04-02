@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, Search } from "lucide-react"
+import { Loader2, Search, Utensils } from "lucide-react"
 import { toast } from "sonner"
 
 import { getCalories } from "@/lib/api"
@@ -187,6 +187,18 @@ export function MealForm() {
 
       {!loading && lastResult && (
         <ResultCard result={lastResult} onDismiss={clearResult} />
+      )}
+
+      {!loading && !lastResult && (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-14 text-center">
+          <Utensils className="h-8 w-8 text-muted-foreground/50" />
+          <div className="space-y-1">
+            <p className="text-sm font-medium">No dish searched yet</p>
+            <p className="text-xs text-muted-foreground">
+              Type a dish name above and hit &ldquo;Get calories&rdquo;
+            </p>
+          </div>
+        </div>
       )}
     </div>
   )
