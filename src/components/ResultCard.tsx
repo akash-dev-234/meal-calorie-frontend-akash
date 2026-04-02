@@ -12,11 +12,13 @@ import {
   Zap,
   ChevronDown,
   ChevronUp,
+  X,
 } from "lucide-react";
 
 type Props = {
-  result: CalorieResult;
-};
+  result: CalorieResult
+  onDismiss?: () => void
+}
 
 type MacroConfig = {
   key: keyof MacroNutrient;
@@ -84,7 +86,7 @@ function MacroGrid({ macros }: { macros: MacroNutrient }) {
   );
 }
 
-export function ResultCard({ result }: Props) {
+export function ResultCard({ result, onDismiss }: Props) {
   const [macroView, setMacroView] = useState<"serving" | "total">("serving");
   const [expandedIngredients, setExpandedIngredients] = useState<Set<number>>(
     new Set(),
@@ -133,9 +135,21 @@ export function ResultCard({ result }: Props) {
             </p>
           </div>
           <div className="flex flex-col items-end gap-1.5 shrink-0 mt-1">
-            <Badge variant="secondary" className="text-xs">
-              {result.source}
-            </Badge>
+            <div className="flex items-center gap-1.5">
+              <Badge variant="secondary" className="text-xs">
+                {result.source}
+              </Badge>
+              {onDismiss && (
+                <button
+                  type="button"
+                  onClick={onDismiss}
+                  className="rounded-md p-0.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
             {fdcId && (
               <a
                 href={`https://fdc.nal.usda.gov/food-details/${fdcId}/nutrients`}

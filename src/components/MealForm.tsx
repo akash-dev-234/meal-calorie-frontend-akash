@@ -23,7 +23,7 @@ export function MealForm() {
   const router = useRouter()
   const token = useAuthStore((s) => s.token)
   const clearAuth = useAuthStore((s) => s.clearAuth)
-  const { lastResult, setLastResult, addEntry } = useMealStore()
+  const { lastResult, setLastResult, addEntry, clearResult } = useMealStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [retryAfter, setRetryAfter] = useState<number | null>(null)
@@ -185,7 +185,9 @@ export function MealForm() {
         </div>
       </form>
 
-      {!loading && lastResult && <ResultCard result={lastResult} />}
+      {!loading && lastResult && (
+        <ResultCard result={lastResult} onDismiss={clearResult} />
+      )}
     </div>
   )
 }
