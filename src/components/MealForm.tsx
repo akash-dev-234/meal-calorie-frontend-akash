@@ -121,7 +121,12 @@ export function MealForm() {
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="dish_name">Dish name</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="dish_name">Dish name</Label>
+              <span className="text-xs text-muted-foreground">
+                Press <kbd className="rounded border px-1 py-0.5 text-xs font-mono bg-muted">/</kbd> to search
+              </span>
+            </div>
             <Controller
               name="dish_name"
               control={control}

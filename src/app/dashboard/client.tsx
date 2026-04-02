@@ -25,7 +25,7 @@ const PAGE_SIZE = 5
 export function DashboardClient() {
   const { authenticated } = useAuthGuard()
   const user = useAuthStore((s) => s.user)
-  const { history, clearHistory } = useMealStore()
+  const { history, clearHistory, removeEntry } = useMealStore()
   const [page, setPage] = useState(1)
 
   if (!authenticated) return null
@@ -36,6 +36,11 @@ export function DashboardClient() {
   const totalCalories = validEntries.reduce((sum, e) => sum + e.total_calories, 0)
   const avgCalories =
     validEntries.length > 0 ? Math.round(totalCalories / validEntries.length) : 0
+
+  const today = new Date().toDateString()
+  const todayCalories = validEntries
+    .filter((e) => new Date(e.searchedAt).toDateString() === today)
+    .reduce((sum, e) => sum + e.total_calories, 0)
 
   const totalPages = Math.ceil(validEntries.length / PAGE_SIZE) || 1
   const safePage = Math.min(page, totalPages)
@@ -53,7 +58,7 @@ export function DashboardClient() {
         <p className="text-sm text-muted-foreground">{user?.email}</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardDescription>Total searches</CardDescription>
@@ -62,6 +67,19 @@ export function DashboardClient() {
           <CardContent>
             <p className="text-3xl font-bold tabular-nums">{validEntries.length}</p>
             <p className="text-xs text-muted-foreground mt-1">dishes looked up</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+            <CardDescription>Today's calories</CardDescription>
+            <Flame className="h-4 w-4 text-orange-500" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold tabular-nums text-orange-500">
+              {todayCalories.toLocaleString()}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">logged today</p>
           </CardContent>
         </Card>
 
@@ -137,6 +155,7 @@ export function DashboardClient() {
                     <th className="px-4 py-3 font-medium">Cal / serving</th>
                     <th className="px-4 py-3 font-medium">Total</th>
                     <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
@@ -166,6 +185,16 @@ export function DashboardClient() {
                           day: "numeric",
                           year: "numeric",
                         })}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => removeEntry(entry.id)}
+                          className="text-destructive/50 hover:text-destructive transition-colors cursor-pointer"
+                          aria-label="Remove entry"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       </td>
                     </tr>
                   ))}

@@ -8,6 +8,7 @@ interface MealState {
   setLastResult: (result: CalorieResult) => void
   clearResult: () => void
   addEntry: (entry: MealHistoryEntry) => void
+  removeEntry: (id: string) => void
   clearHistory: () => void
 }
 
@@ -20,6 +21,8 @@ export const useMealStore = create<MealState>()(
       clearResult: () => set({ lastResult: null }),
       addEntry: (entry) =>
         set((state) => ({ history: [entry, ...state.history] })),
+      removeEntry: (id) =>
+        set((state) => ({ history: state.history.filter((e) => e.id !== id) })),
       clearHistory: () => set({ history: [], lastResult: null }),
     }),
     { name: "meal-store" }

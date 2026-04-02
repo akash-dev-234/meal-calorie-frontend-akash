@@ -100,7 +100,7 @@ export function DishAutocomplete({ id, value, onChange, onEnter, error }: Props)
           aria-expanded={open}
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "w-full justify-between font-normal",
+            "w-full justify-between font-normal cursor-pointer",
             !value && "text-muted-foreground",
             error && "border-destructive"
           )}
