@@ -64,21 +64,15 @@ async function request<T>(
     }
 
     let message = "Something went wrong"
-    let retryAfter: number | undefined
-
     const rateLimit = parseRateLimitHeaders(res.headers)
+    const headerRetryAfter = rateLimit ? secondsUntil(rateLimit.reset) : undefined
+    let retryAfter = res.status === 429 ? headerRetryAfter : undefined
 
     try {
       const body = await res.json()
       message = body.message ?? body.error ?? message
-      if (res.status === 429) {
-        retryAfter = body.retryAfter ?? (rateLimit ? secondsUntil(rateLimit.reset) : undefined)
-      }
-    } catch {
-      if (res.status === 429 && rateLimit) {
-        retryAfter = secondsUntil(rateLimit.reset)
-      }
-    }
+      if (res.status === 429) retryAfter = body.retryAfter ?? headerRetryAfter
+    } catch {}
 
     throw new ApiError(message, res.status, retryAfter)
   }

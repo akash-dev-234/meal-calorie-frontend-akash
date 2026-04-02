@@ -22,12 +22,6 @@ import { Separator } from "@/components/ui/separator"
 
 const PAGE_SIZE = 5
 
-function handleClearHistory(clearHistory: () => void, setPage: (p: number) => void) {
-  clearHistory()
-  setPage(1)
-  toast.success("History cleared")
-}
-
 export function DashboardClient() {
   const { authenticated } = useAuthGuard()
   const user = useAuthStore((s) => s.user)
@@ -107,7 +101,7 @@ export function DashboardClient() {
               variant="ghost"
               size="sm"
               className="gap-1.5 text-muted-foreground hover:text-destructive"
-              onClick={() => handleClearHistory(clearHistory, setPage)}
+              onClick={() => { clearHistory(); setPage(1); toast.success("History cleared") }}
             >
               <Trash2 className="h-3.5 w-3.5" />
               Clear history
