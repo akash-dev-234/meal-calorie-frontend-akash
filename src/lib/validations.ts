@@ -13,7 +13,12 @@ export const loginSchema = z.object({
 })
 
 export const mealSchema = z.object({
-  dish_name: z.string().trim().min(1, "Dish name is required").max(100, "Dish name is too long"),
+  dish_name: z
+    .string()
+    .trim()
+    .min(1, "Dish name is required")
+    .max(100, "Dish name is too long")
+    .regex(/[a-zA-Z]/, "Dish name must contain at least one letter"),
   servings: z
     .number({ error: "Servings must be a number" })
     .positive("Servings must be greater than 0")
