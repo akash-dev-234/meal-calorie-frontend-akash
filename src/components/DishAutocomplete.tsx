@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown, History } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import {
   Command,
@@ -16,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useMealStore } from "@/stores/mealStore"
 import { cn } from "@/lib/utils"
 
 const POPULAR_DISHES = [
@@ -61,12 +62,24 @@ type Props = {
 
 export function DishAutocomplete({ id, value, onChange, onEnter, error }: Props) {
   const [open, setOpen] = useState(false)
+  const history = useMealStore((s) => s.history)
+
+  const recentDishes = Array.from(
+    new Map(
+      history
+        .filter((e) => e.dish_name)
+        .map((e) => [e.dish_name.toLowerCase(), e.dish_name])
+    ).values()
+  ).slice(0, 3)
 
   const filtered = value.length > 0
-    ? POPULAR_DISHES.filter((d) =>
-        d.toLowerCase().includes(value.toLowerCase())
-      )
+    ? POPULAR_DISHES.filter((d) => d.toLowerCase().includes(value.toLowerCase()))
     : POPULAR_DISHES.slice(0, 8)
+
+  const select = (dish: string) => {
+    onChange(dish)
+    setOpen(false)
+  }
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -100,16 +113,30 @@ export function DishAutocomplete({ id, value, onChange, onEnter, error }: Props)
             />
             <CommandList>
               <CommandEmpty>No suggestions — just press search.</CommandEmpty>
+
+              {recentDishes.length > 0 && value.length === 0 && (
+                <CommandGroup heading="Recent searches">
+                  {recentDishes.map((dish) => (
+                    <CommandItem
+                      key={dish}
+                      value={dish}
+                      data-checked={value.toLowerCase() === dish.toLowerCase()}
+                      onSelect={() => select(dish)}
+                    >
+                      <History className="mr-2 h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <span className="capitalize">{dish}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+
               <CommandGroup heading="Popular dishes">
                 {filtered.map((dish) => (
                   <CommandItem
                     key={dish}
                     value={dish}
                     data-checked={value.toLowerCase() === dish.toLowerCase()}
-                    onSelect={() => {
-                      onChange(dish)
-                      setOpen(false)
-                    }}
+                    onSelect={() => select(dish)}
                   >
                     {dish}
                   </CommandItem>

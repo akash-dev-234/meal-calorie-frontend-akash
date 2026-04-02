@@ -20,7 +20,8 @@ const mealStoreMock = {
 }
 
 vi.mock("@/stores/mealStore", () => ({
-  useMealStore: () => mealStoreMock,
+  useMealStore: (selector?: (s: typeof mealStoreMock) => unknown) =>
+    selector ? selector(mealStoreMock) : mealStoreMock,
 }))
 
 beforeEach(() => {
