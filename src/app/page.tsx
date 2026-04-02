@@ -1,16 +1,12 @@
-"use client"
+import type { Metadata } from "next"
+import { RootClient } from "./client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/stores/authStore"
+export const metadata: Metadata = {
+  title: "CalorieIQ — Meal Calorie & Macro Tracker",
+  description:
+    "Look up calories and macronutrients for any dish using USDA FoodData Central. Track your nutrition history.",
+}
 
 export default function RootPage() {
-  const router = useRouter()
-  const token = useAuthStore((s) => s.token)
-
-  useEffect(() => {
-    router.replace(token ? "/dashboard" : "/login")
-  }, [token, router])
-
-  return null
+  return <RootClient />
 }

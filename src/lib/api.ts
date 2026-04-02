@@ -23,7 +23,7 @@ export function decodeToken(token: string): Partial<User> {
       last_name: payload.last_name ?? "",
       email: payload.email ?? "",
     }
-  } catch (_) {
+  } catch {
     return {}
   }
 }
@@ -74,7 +74,7 @@ async function request<T>(
       if (res.status === 429) {
         retryAfter = body.retryAfter ?? (rateLimit ? secondsUntil(rateLimit.reset) : undefined)
       }
-    } catch (_) {
+    } catch {
       if (res.status === 429 && rateLimit) {
         retryAfter = secondsUntil(rateLimit.reset)
       }

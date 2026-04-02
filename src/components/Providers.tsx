@@ -28,14 +28,13 @@ function resolveTheme(theme: Theme): ResolvedTheme {
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system")
-
-  useEffect(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "system"
     const stored = localStorage.getItem("theme") as Theme | null
-    if (stored === "light" || stored === "dark" || stored === "system") {
-      setThemeState(stored)
-    }
-  }, [])
+    return stored === "light" || stored === "dark" || stored === "system"
+      ? stored
+      : "system"
+  })
 
   useEffect(() => {
     if (theme !== "system") return
