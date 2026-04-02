@@ -22,6 +22,8 @@ export function Header() {
     ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase()
     : ""
 
+  if (pathname === "/login" || pathname === "/register") return null
+
   const navLinks = [
     { href: "/calories", label: "Look up", icon: Search },
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
