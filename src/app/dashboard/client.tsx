@@ -21,6 +21,13 @@ import { Separator } from "@/components/ui/separator"
 
 const PAGE_SIZE = 5
 
+function getGreeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return "Good morning"
+  if (hour < 18) return "Good afternoon"
+  return "Good evening"
+}
+
 export function DashboardClient() {
   const { authenticated } = useAuthGuard()
   const user = useAuthStore((s) => s.user)
@@ -47,7 +54,7 @@ export function DashboardClient() {
     <div className="mx-auto max-w-5xl px-4 py-10 space-y-8">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Welcome back, {user?.first_name}
+          {getGreeting()}, {user?.first_name}
         </h1>
         <p className="text-sm text-muted-foreground">{user?.email}</p>
       </div>
