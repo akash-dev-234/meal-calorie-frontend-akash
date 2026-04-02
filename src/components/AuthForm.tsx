@@ -1,26 +1,30 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import Link from "next/link"
-import { Eye, EyeOff, Loader2, Flame } from "lucide-react"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { Eye, EyeOff, Loader2, Flame } from "lucide-react";
 
-import { register as registerUser, login as loginUser, decodeToken } from "@/lib/api"
+import {
+  register as registerUser,
+  login as loginUser,
+  decodeToken,
+} from "@/lib/api";
 import {
   registerSchema,
   loginSchema,
   type RegisterInput,
   type LoginInput,
-} from "@/lib/validations"
-import { useAuthStore } from "@/stores/authStore"
-import { ApiError } from "@/types"
+} from "@/lib/validations";
+import { useAuthStore } from "@/stores/authStore";
+import { ApiError } from "@/types";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -28,24 +32,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 type Props = {
-  mode: "login" | "register"
-}
+  mode: "login" | "register";
+};
 
 export function AuthForm({ mode }: Props) {
-  const router = useRouter()
-  const { setAuth, token } = useAuthStore()
-  const [serverError, setServerError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const { setAuth, token } = useAuthStore();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    if (token) router.replace("/dashboard")
-  }, [token, router])
+    if (token) router.replace("/dashboard");
+  }, [token, router]);
 
-  const schema = mode === "register" ? registerSchema : loginSchema
+  const schema = mode === "register" ? registerSchema : loginSchema;
 
   const {
     register,
@@ -53,36 +57,36 @@ export function AuthForm({ mode }: Props) {
     formState: { errors },
   } = useForm<RegisterInput | LoginInput>({
     resolver: zodResolver(schema),
-  })
+  });
 
   const errorMessage = (status: number, message: string) => {
-    if (status === 409) return "An account with this email already exists"
-    if (status === 401) return "Invalid email or password"
-    if (status === 429) return "Too many attempts. Please wait and try again"
-    return message
-  }
+    if (status === 409) return "An account with this email already exists";
+    if (status === 401) return "Invalid email or password";
+    if (status === 429) return "Too many attempts. Please wait and try again";
+    return message;
+  };
 
   const onSubmit = async (values: RegisterInput | LoginInput) => {
-    setServerError(null)
-    setLoading(true)
+    setServerError(null);
+    setLoading(true);
     try {
       const res =
         mode === "register"
           ? await registerUser(values as RegisterInput)
-          : await loginUser(values as LoginInput)
-      const user = res.user ?? decodeToken(res.token)
-      setAuth(res.token, user as import("@/types").User)
-      router.push("/dashboard")
+          : await loginUser(values as LoginInput);
+      const user = res.user ?? decodeToken(res.token);
+      setAuth(res.token, user as import("@/types").User);
+      router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {
-        setServerError(errorMessage(err.status, err.message))
+        setServerError(errorMessage(err.status, err.message));
       } else {
-        setServerError("Something went wrong. Please try again.")
+        setServerError("Something went wrong. Please try again.");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="w-full max-w-md space-y-6">
@@ -127,9 +131,13 @@ export function AuthForm({ mode }: Props) {
                     placeholder="Jane"
                     {...register("firstName")}
                   />
-                  {(errors as Record<string, { message?: string }>).firstName && (
+                  {(errors as Record<string, { message?: string }>)
+                    .firstName && (
                     <p className="text-xs text-destructive">
-                      {(errors as Record<string, { message?: string }>).firstName?.message}
+                      {
+                        (errors as Record<string, { message?: string }>)
+                          .firstName?.message
+                      }
                     </p>
                   )}
                 </div>
@@ -140,9 +148,13 @@ export function AuthForm({ mode }: Props) {
                     placeholder="Smith"
                     {...register("lastName")}
                   />
-                  {(errors as Record<string, { message?: string }>).lastName && (
+                  {(errors as Record<string, { message?: string }>)
+                    .lastName && (
                     <p className="text-xs text-destructive">
-                      {(errors as Record<string, { message?: string }>).lastName?.message}
+                      {
+                        (errors as Record<string, { message?: string }>)
+                          .lastName?.message
+                      }
                     </p>
                   )}
                 </div>
@@ -158,7 +170,9 @@ export function AuthForm({ mode }: Props) {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -168,8 +182,10 @@ export function AuthForm({ mode }: Props) {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder={mode === "register" ? "Min. 8 characters" : "••••••••"}
-                  className="pr-10"
+                  placeholder={
+                    mode === "register" ? "Min. 8 characters" : "••••••••"
+                  }
+                  className="pr-10 mb-2"
                   {...register("password")}
                 />
                 <button
@@ -179,14 +195,16 @@ export function AuthForm({ mode }: Props) {
                   tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <EyeOff className="h-4 w-4 mb-2" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-4 w-4 mb-2" />
                   )}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.password.message}
+                </p>
               )}
             </div>
           </CardContent>
@@ -232,5 +250,5 @@ export function AuthForm({ mode }: Props) {
         </form>
       </Card>
     </div>
-  )
+  );
 }
