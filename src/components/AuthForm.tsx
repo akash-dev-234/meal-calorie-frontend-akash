@@ -122,44 +122,23 @@ export function AuthForm({ mode }: Props) {
               </Alert>
             )}
 
-            {mode === "register" && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First name</Label>
-                  <Input
-                    id="firstName"
-                    placeholder="Jane"
-                    {...register("firstName")}
-                  />
-                  {(errors as Record<string, { message?: string }>)
-                    .firstName && (
-                    <p className="text-xs text-destructive">
-                      {
-                        (errors as Record<string, { message?: string }>)
-                          .firstName?.message
-                      }
-                    </p>
-                  )}
+            {mode === "register" && (() => {
+              const e = errors as Record<string, { message?: string }>
+              return (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First name</Label>
+                    <Input id="firstName" placeholder="Jane" {...register("firstName")} />
+                    {e.firstName && <p className="text-xs text-destructive">{e.firstName.message}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last name</Label>
+                    <Input id="lastName" placeholder="Smith" {...register("lastName")} />
+                    {e.lastName && <p className="text-xs text-destructive">{e.lastName.message}</p>}
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last name</Label>
-                  <Input
-                    id="lastName"
-                    placeholder="Smith"
-                    {...register("lastName")}
-                  />
-                  {(errors as Record<string, { message?: string }>)
-                    .lastName && (
-                    <p className="text-xs text-destructive">
-                      {
-                        (errors as Record<string, { message?: string }>)
-                          .lastName?.message
-                      }
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
+              )
+            })()}
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { useAuthGuard } from "@/hooks/useAuthGuard"
 import { useAuthStore } from "@/stores/authStore"
 import { useMealStore } from "@/stores/mealStore"
+import { getGreeting } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -21,11 +22,10 @@ import { Separator } from "@/components/ui/separator"
 
 const PAGE_SIZE = 5
 
-function getGreeting() {
-  const hour = new Date().getHours()
-  if (hour < 12) return "Good morning"
-  if (hour < 18) return "Good afternoon"
-  return "Good evening"
+function handleClearHistory(clearHistory: () => void, setPage: (p: number) => void) {
+  clearHistory()
+  setPage(1)
+  toast.success("History cleared")
 }
 
 export function DashboardClient() {
@@ -43,7 +43,7 @@ export function DashboardClient() {
   const avgCalories =
     validEntries.length > 0 ? Math.round(totalCalories / validEntries.length) : 0
 
-  const totalPages = Math.max(1, Math.ceil(validEntries.length / PAGE_SIZE))
+  const totalPages = Math.ceil(validEntries.length / PAGE_SIZE) || 1
   const safePage = Math.min(page, totalPages)
   const pageEntries = validEntries.slice(
     (safePage - 1) * PAGE_SIZE,
@@ -107,7 +107,7 @@ export function DashboardClient() {
               variant="ghost"
               size="sm"
               className="gap-1.5 text-muted-foreground hover:text-destructive"
-              onClick={() => { clearHistory(); setPage(1); toast.success("History cleared") }}
+              onClick={() => handleClearHistory(clearHistory, setPage)}
             >
               <Trash2 className="h-3.5 w-3.5" />
               Clear history

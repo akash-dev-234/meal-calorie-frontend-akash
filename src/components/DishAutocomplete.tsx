@@ -76,13 +76,11 @@ export function DishAutocomplete({ id, value, onChange, onEnter, error }: Props)
     return () => document.removeEventListener("keydown", handler)
   }, [])
 
-  const recentDishes = Array.from(
-    new Map(
-      history
-        .filter((e) => e.dish_name)
-        .map((e) => [e.dish_name.toLowerCase(), e.dish_name])
-    ).values()
-  ).slice(0, 3)
+  const seen = new Set<string>()
+  const recentDishes = history
+    .filter((e) => e.dish_name && !seen.has(e.dish_name.toLowerCase()) && seen.add(e.dish_name.toLowerCase()))
+    .slice(0, 3)
+    .map((e) => e.dish_name)
 
   const filtered = value.length > 0
     ? POPULAR_DISHES.filter((d) => d.toLowerCase().includes(value.toLowerCase()))

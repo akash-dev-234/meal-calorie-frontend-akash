@@ -53,30 +53,30 @@ export function MealForm() {
   }, [retryAfter])
 
   const handleError = (err: ApiError) => {
-    if (err.status === 400) {
-      setFieldError("servings", { message: err.message })
-      return
+    switch (err.status) {
+      case 400:
+        setFieldError("servings", { message: err.message })
+        break
+      case 401:
+      case 403:
+        clearAuth()
+        router.replace("/login")
+        break
+      case 404:
+        setError("No dish found matching that name. Try being more specific.")
+        break
+      case 422:
+        setError("Food found but calorie data is unavailable for this dish.")
+        break
+      case 429: {
+        const seconds = err.retryAfter ?? 60
+        setRetryAfter(seconds)
+        setError(`Rate limit reached. Try again in ${seconds}s.`)
+        break
+      }
+      default:
+        setError(err.status === 500 ? "Server error. Please try again in a moment." : err.message)
     }
-    if (err.status === 401 || err.status === 403) {
-      clearAuth()
-      router.replace("/login")
-      return
-    }
-    if (err.status === 404) {
-      setError("No dish found matching that name. Try being more specific.")
-      return
-    }
-    if (err.status === 422) {
-      setError("Food found but calorie data is unavailable for this dish.")
-      return
-    }
-    if (err.status === 429) {
-      const seconds = err.retryAfter ?? 60
-      setRetryAfter(seconds)
-      setError(`Rate limit reached. Try again in ${seconds}s.`)
-      return
-    }
-    setError(err.status === 500 ? "Server error. Please try again in a moment." : err.message)
   }
 
   const onSubmit = async (values: MealInput) => {
@@ -84,10 +84,7 @@ export function MealForm() {
     setError(null)
     setLoading(true)
     try {
-      const { result, rateLimit: rl } = await getCalories(
-        { dish_name: values.dish_name, servings: values.servings },
-        token
-      )
+      const { result, rateLimit: rl } = await getCalories(values, token)
       if (rl) setRateLimit(rl)
       setLastResult(result)
       addEntry({

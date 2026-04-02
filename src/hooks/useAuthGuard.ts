@@ -14,5 +14,5 @@ export function useAuthGuard() {
     if (!token) router.replace("/login")
   }, [hydrated, token, router])
 
-  return { authenticated: hydrated && !!token }
+  return { authenticated: hydrated && token !== null }
 }
