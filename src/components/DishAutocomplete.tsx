@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronsUpDown, History } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import {
@@ -63,6 +63,18 @@ type Props = {
 export function DishAutocomplete({ id, value, onChange, onEnter, error }: Props) {
   const [open, setOpen] = useState(false)
   const history = useMealStore((s) => s.history)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== "/") return
+      const tag = (e.target as HTMLElement).tagName
+      if (tag === "INPUT" || tag === "TEXTAREA") return
+      e.preventDefault()
+      setOpen(true)
+    }
+    document.addEventListener("keydown", handler)
+    return () => document.removeEventListener("keydown", handler)
+  }, [])
 
   const recentDishes = Array.from(
     new Map(
