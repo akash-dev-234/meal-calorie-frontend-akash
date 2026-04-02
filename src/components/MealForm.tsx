@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Search } from "lucide-react"
+import { toast } from "sonner"
 
 import { getCalories } from "@/lib/api"
 import { mealSchema, type MealInput } from "@/lib/validations"
@@ -93,6 +94,9 @@ export function MealForm() {
         ...result,
         id: crypto.randomUUID(),
         searchedAt: new Date().toISOString(),
+      })
+      toast.success(`${result.dish_name} — ${result.total_calories} cal`, {
+        description: `${result.servings} ${result.servings === 1 ? "serving" : "servings"} · added to history`,
       })
     } catch (err) {
       if (err instanceof ApiError) handleError(err)

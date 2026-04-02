@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import Script from "next/script"
 import "./globals.css"
+import { Toaster } from "sonner"
 import { Header } from "@/components/Header"
 import { Providers } from "@/components/Providers"
 
@@ -46,6 +47,7 @@ export default function RootLayout({
             <Header />
             <main className="flex-1">{children}</main>
           </div>
+          <Toaster position="bottom-right" richColors />
         </Providers>
       </body>
     </html>

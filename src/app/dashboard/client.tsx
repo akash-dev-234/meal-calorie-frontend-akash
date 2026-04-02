@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowRight, ChevronLeft, ChevronRight, Flame, Search, Trash2, UtensilsCrossed } from "lucide-react"
+import { toast } from "sonner"
 
 import { useAuthGuard } from "@/hooks/useAuthGuard"
 import { useAuthStore } from "@/stores/authStore"
@@ -99,7 +100,7 @@ export function DashboardClient() {
               variant="ghost"
               size="sm"
               className="gap-1.5 text-muted-foreground hover:text-destructive"
-              onClick={() => { clearHistory(); setPage(1) }}
+              onClick={() => { clearHistory(); setPage(1); toast.success("History cleared") }}
             >
               <Trash2 className="h-3.5 w-3.5" />
               Clear history
